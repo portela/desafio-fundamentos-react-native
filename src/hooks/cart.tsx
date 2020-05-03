@@ -59,11 +59,6 @@ const CartProvider: React.FC = ({ children }) => {
     [products],
   );
 
-  useEffect(() => {
-    console.log('Products changed - new products:');
-    console.log(products);
-  }, [products]);
-
   const increment = useCallback(
     async id => {
       // TODO INCREMENTS A PRODUCT QUANTITY IN THE CART
