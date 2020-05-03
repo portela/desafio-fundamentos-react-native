@@ -60,7 +60,7 @@ const CartProvider: React.FC = ({ children }) => {
         return;
       }
 
-      increment(p.id);
+      increment(product.id);
     },
     [products],
   );
