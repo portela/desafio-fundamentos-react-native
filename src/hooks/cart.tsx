@@ -32,7 +32,6 @@ const CartProvider: React.FC = ({ children }) => {
   useEffect(() => {
     async function loadProducts(): Promise<void> {
       const storageProducts = await AsyncStorage.getItem('@GoMarket:products');
-
       if (storageProducts) {
         setProducts(JSON.parse(storageProducts));
       }
@@ -41,13 +40,15 @@ const CartProvider: React.FC = ({ children }) => {
     loadProducts();
   }, []);
 
-  const updateStorage = async (updatedProducts: Product[]): Promise<void> => {
-    await AsyncStorage.setItem(
-      '@GoMarket:products',
-      JSON.stringify(updatedProducts),
-    );
-    console.log('Updating storage.');
-  };
+  useEffect(() => {
+    async function updateStorage(): Promise<void> {
+      await AsyncStorage.setItem(
+        '@GoMarket:products',
+        JSON.stringify(products),
+      );
+    }
+    updateStorage();
+  }, [products]);
 
   const addToCart = useCallback(
     async product => {
@@ -56,19 +57,10 @@ const CartProvider: React.FC = ({ children }) => {
 
       if (productIndex < 0) {
         setProducts([...products, product]);
-        updateStorage([...products, product]);
         return;
       }
 
-      const updatedProduct: Product = {
-        ...product,
-        quantity: products[productIndex].quantity + 1,
-      };
-
-      const newProducts = products.slice();
-      newProducts.splice(productIndex, 1, updatedProduct);
-      setProducts(newProducts);
-      updateStorage(newProducts);
+      increment(p.id);
     },
     [products],
   );
@@ -92,7 +84,6 @@ const CartProvider: React.FC = ({ children }) => {
       const newProducts = products.slice();
       newProducts.splice(productIndex, 1, updatedProduct);
       setProducts(newProducts);
-      updateStorage(newProducts);
     },
     [products],
   );
@@ -112,7 +103,6 @@ const CartProvider: React.FC = ({ children }) => {
       if (product.quantity === 1) {
         newProducts.splice(productIndex, 1);
         setProducts(newProducts);
-        updateStorage(newProducts);
         return;
       }
 
@@ -122,7 +112,6 @@ const CartProvider: React.FC = ({ children }) => {
       };
       newProducts.splice(productIndex, 1, updatedProduct);
       setProducts(newProducts);
-      updateStorage(newProducts);
     },
     [products],
   );
