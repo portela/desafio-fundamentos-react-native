@@ -44,29 +44,30 @@ const CartProvider: React.FC = ({ children }) => {
     async function updateStorage(): Promise<void> {
       await AsyncStorage.setItem(
         '@GoMarket:products',
-        JSON.stringify(products),
+        JSON.stringify([products]),
       );
     }
     updateStorage();
   }, [products]);
 
   const addToCart = useCallback(
-    async product => {
+    product => {
       // Add product to cart
       const productIndex = products.findIndex(p => p.id === product.id);
 
       if (productIndex < 0) {
-        setProducts([...products, product]);
+        const productWithQnt = { ...product, quantity: 1 };
+        setProducts([...products, productWithQnt]);
         return;
       }
 
       increment(product.id);
     },
-    [products],
+    [products, increment],
   );
 
   const increment = useCallback(
-    async id => {
+    id => {
       // TODO INCREMENTS A PRODUCT QUANTITY IN THE CART
       const productIndex = products.findIndex(p => p.id === id);
 
@@ -89,7 +90,7 @@ const CartProvider: React.FC = ({ children }) => {
   );
 
   const decrement = useCallback(
-    async id => {
+    id => {
       // TODO DECREMENTS A PRODUCT QUANTITY IN THE CART
       const productIndex = products.findIndex(p => p.id === id);
 
